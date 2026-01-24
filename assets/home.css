@@ -1,0 +1,23 @@
+/* Global Home Container Styles */
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex;
+    width: flex;
+    height: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    /* Ensuring the background matches the user's preference or global style */
+    /* background-color: #0d1117;  <-- Already in maincard.css container, but good to have fallback or if specific to home */
+}
+
+/* Ensure body doesn't scroll when card is active */
+body {
+    margin: 0;
+    overflow: hidden;
+    /* Hide scrollbars on the body */
+    background-color: #0d1117;
+    font-family: 'Inter', sans-serif;
+    /* Example font */
+    color: white;
+}

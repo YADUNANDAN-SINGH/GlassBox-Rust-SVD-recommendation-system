@@ -1,0 +1,58 @@
+﻿cargo : warning: struct `Video` is never 
+constructed
+At line:1 char:1
++ cargo check --target wasm32-unknown-unknown 
+2>&1 | Out-File -FilePath ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~
+    + CategoryInfo          : NotSpecif    
+ied: (warning: struct...ver constru    
+cted:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCom    
+mandError
+ 
+ --> src\model\video.rs:6:12
+  |
+6 | pub struct Video {
+  |            ^^^^^
+  |
+  = note: `#[warn(dead_code)]` (part of 
+`#[warn(unused)]`) on by default
+
+warning: function `save_video` is never used
+  --> src\model\video.rs:24:14
+   |
+24 | pub async fn save_video(video: Video) ...
+   |              ^^^^^^^^^^
+
+warning: struct `IndividualResponse` is never 
+constructed
+ --> src\api\youtube.rs:8:8
+  |
+8 | struct IndividualResponse {
+  |        ^^^^^^^^^^^^^^^^^^
+
+warning: struct `InvidiousThumbnail` is never 
+constructed
+  --> src\api\youtube.rs:24:8
+   |
+24 | struct InvidiousThumbnail {url: String}
+   |        ^^^^^^^^^^^^^^^^^^
+
+warning: struct `InvidiousRelated` is never 
+constructed
+  --> src\api\youtube.rs:27:8
+   |
+27 | struct InvidiousRelated {
+   |        ^^^^^^^^^^^^^^^^
+
+warning: function `fetch_video` is never used
+  --> src\api\youtube.rs:34:14
+   |
+34 | pub async fn fetch_video(video_id: &st...
+   |              ^^^^^^^^^^^
+
+warning: `glassbox` (bin "glassbox") 
+generated 6 warnings
+    Finished `dev` profile [unoptimized + 
+debuginfo] target(s) in 0.74s

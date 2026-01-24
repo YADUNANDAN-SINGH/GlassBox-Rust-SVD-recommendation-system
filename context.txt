@@ -1,0 +1,55 @@
+# GLASSBOX - Project Context & Progress Report
+
+## 1. Project Overview
+**Name:** Glassbox
+**Type:** Web Assembly (WASM) Application
+**Main Tech Stack:**
+- **Language:** Rust (2021 edition)
+- **Frontend Framework:** Leptos (v0.8.15)
+- **Database:** SurrealDB (v2.1.0, embedded via WASM)
+- **Build Tool:** Trunk
+- **Styling:** Stylance
+- **Routing:** Leptos Router
+
+## 2. Directory Structure
+- `src/main.rs`: Entry point.
+- `src/api/`: API logic (search, youtube).
+- `src/cards/`: UI card components (search results).
+- `src/components/`: Reusable UI components.
+- `src/model/`: Data models (video structs).
+- `src/navbar/`: Navigation components.
+- `src/pages/`: Page views (home).
+- `assets/`: Static assets (CSS, JS).
+
+## 3. Current Status (as of 2026-01-25)
+**Status:** 🔴 Build Broken (Compilation Errors)
+
+### Recent Progress:
+- Configured `Cargo.toml` with `leptos`, `surrealdb`, `reqwest`.
+- Attempted to run `trunk serve` but encountered compilation errors.
+- Debugging identified invalid dependencies for WASM target (`errno` crate).
+
+### Critical Issues:
+1.  **Compiler Error (errno):** The `errno` crate is being pulled in by `async-graphql` (a dependency of `surrealdb`), which is incompatible with the `wasm32-unknown-unknown` target.
+2.  **Conflicting Dependencies:** `Cargo.toml` currently contains `yew` (v0.22.0), which conflicts with `leptos` (the main framework used). Mixing these two is generally not recommended.
+3.  **Incompatible Async Runtime:** `tokio` (v1.49.0) and `polling` were manually added. `tokio` is too heavy for WASM and often breaks builds; `wasm-bindgen-futures` is preferred for WASM async.
+
+## 4. Next Steps (To Fix Build)
+1.  **Clean up `Cargo.toml`:**
+    - Remove `yew` (project uses Leptos).
+    - Remove `tokio` and `polling` (unless absolutely necessary and configured for WASM).
+2.  **Fix `errno` Error:**
+    - Downgrade `async-graphql` to version `7.0.17` (or similar) to avoid the `errno` dependency.
+    - This can be done by patching `Cargo.toml` or carefully adjusting `surrealdb` features.
+3.  **Run Build:**
+    - Execute `trunk serve` again to verify the fix.
+
+## 5. Helpful Commands
+- Run Dev Server: `trunk serve`
+- Check Compilation: `cargo check --target wasm32-unknown-unknown`
+- Analyze Dependencies: `cargo tree`
+
+## 6. Key Files for Review
+- `Cargo.toml`: Dependency management (Central point of current errors).
+- `src/api/search.rs`: Search logic.
+- `index.html`: Main HTML entry.

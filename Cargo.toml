@@ -1,0 +1,20 @@
+[package]
+name = "glassbox"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bcrypt = "0.17.1"
+leptos = { version = "0.8.15", features = ["csr", "nightly"] }
+leptos_meta = "0.8.5"
+leptos_router = { version = "0.8.11", features = ["nightly"] }
+stylance = "0.7.4"
+serde = { version = "1.0", features = ["derive"] }
+surrealdb = { version = "2.0.4", default-features = false, features = ["kv-indxdb"] }
+web-sys = { version = "0.3.76", features = ["Window", "Storage", "KeyboardEvent", "HtmlInputElement", "Event"] }
+# reqwest updated to include rustls-tls for server functions, keeping json
+reqwest = { version = "0.11", features = ["json"] }
+chrono = { version = "0.4.43", features = ["wasmbind"] }
+# getrandom updated to 0.3 with wasm_js to fix wasm32-unknown-unknown compilation error
+getrandom = { version = "0.3", features = ["wasm_js"] }
+urlencoding = "2.1"
