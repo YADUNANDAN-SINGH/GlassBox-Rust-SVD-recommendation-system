@@ -25,7 +25,7 @@ pub fn Search() -> impl IntoView {
 
         leptos::task::spawn_local(async move {
             // Updated to pass String, not &str, as per server function signature
-            match search_videos(q).await {
+            match search_videos(&q).await {
                 Ok(results) => {
                     leptos::logging::log!("Found {} videos", results.len());
                     if results.is_empty() {

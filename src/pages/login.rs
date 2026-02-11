@@ -13,33 +13,43 @@ pub fn Login() -> impl IntoView {
     let session = use_context::<SessionState>().expect("Session missing");
     let navigate = use_navigate();
 
+    let (is_loading, set_is_loading) = signal(false);
+
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
-        ev.prevent_default(); // Don't reload the page
+        ev.prevent_default(); 
+        set_is_loading.set(true);
+        set_error.set(None);
         
         // Get values from signals
         let u_val = username.get();
         let p_val = password.get();
         
+        leptos::logging::log!("LOGIN PAGE: Submitting for user '{}'", u_val);
+        
         let u_for_login = u_val.clone();
-        let u_for_session = u_val.clone(); // Clone for usage in session.login
+        let u_for_session = u_val.clone(); 
 
         // Clone environment for async block
         let sess = session.clone();
         let nav = navigate.clone();
         let setter = set_error.clone();
+        let loader = set_is_loading.clone();
 
         leptos::task::spawn_local(async move {
             match login_user(u_for_login, p_val).await {
                 Ok(_) => {
+                    leptos::logging::log!("LOGIN PAGE: Success, redirecting...");
                     // 1. Update Session
                     sess.login(u_for_session);
                     // 2. Redirect to Home
                     nav("/", Default::default());
                 },
                 Err(e) => {
+                    leptos::logging::log!("LOGIN PAGE: Error: {}", e);
                     setter.set(Some(e));
                 }
             }
+            loader.set(false);
         });
     };
 
@@ -82,7 +92,9 @@ pub fn Login() -> impl IntoView {
                         <a href="/forgot-password" class="forgot-link">"Forgot Password?"</a>
                     </div>
 
-                    <button type="submit" class="submit-btn">"Login"</button>
+                    <button type="submit" class="submit-btn" disabled=move || is_loading.get()>
+                        {move || if is_loading.get() { "Logging in..." } else { "Login" }}
+                    </button>
                 </form>
             </div>
         </div>

@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
-use surrealdb::{Response, Surreal};
+use surrealdb::Response;
 use crate::model::db::DB; // <------- Import the connection we made in db.rs
 use bcrypt::{hash, DEFAULT_COST, verify}; // <------- This helps us to store hashed password NOT real passwrod.
 
-use surrealdb::engine::local::Db;
+
 
 pub async fn is_email_taken(email:String) -> Result<bool, String> {
     let db = DB.get().ok_or("Database not included")?;
@@ -80,12 +80,13 @@ pub async fn create_new_user(username: String, email: String, raw_password: Stri
 }
 
 pub async fn login_user(username: String, password: String) -> Result<User, String> {
+    leptos::logging::log!("LOGIN ATTEMPT: Starting for user '{}'", username);
     let db = DB.get().ok_or("Database not loaded")?;
 
     // 1. Find the user by username
     let sql = "SELECT * FROM user WHERE username = $username";
     let mut response: Response = db.query(sql)
-        .bind(("username", username))
+        .bind(("username", username.clone()))
         .await
         .map_err(|e| e.to_string())?;
 
@@ -94,14 +95,18 @@ pub async fn login_user(username: String, password: String) -> Result<User, Stri
     
     // 2. Check if user exists
     if let Some(user) = users.first() {
+        leptos::logging::log!("LOGIN: User found: {}", user.username);
         // 3. Verify the password against the stored hash
         let valid = verify(&password, &user.password).unwrap_or(false);
         if valid {
+            leptos::logging::log!("LOGIN: Password verification SUCCESS");
             Ok(user.clone())
         } else {
+            leptos::logging::log!("LOGIN: Password verification FAILED");
             Err("Invalid password".to_string())
         }
     } else {
+        leptos::logging::log!("LOGIN: User '{}' NOT FOUND", username);
         Err("User not found".to_string())
     }
 }

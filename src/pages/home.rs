@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos_meta::{Stylesheet, Script};
+use leptos_meta::Stylesheet;
 use crate::cards::main_card::MainCard;
 use crate::components::search::Search; // We will create this next
 use crate::model::session::SessionState;

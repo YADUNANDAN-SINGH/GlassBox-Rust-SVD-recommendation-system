@@ -23,7 +23,7 @@ mod components;
 
 // #[cfg(not(target_arch = "wasm32"))]
 // pub use api::youtube::fetch_video;
-mod components;
+
 
 fn main(){
     leptos::mount::mount_to_body(App);

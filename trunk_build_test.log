@@ -1,0 +1,101 @@
+﻿2026-02-11T22:06:06.055069Z  INFO Starting trunk 0.21.14
+2026-02-11T22:06:06.056141Z  INFO starting build
+trunk : warning: unused import: 
+`Script`
+At line:1 char:1
++ trunk build 2>&1 | Out-File 
+-Encoding utf8 trunk_build_test.log
++ ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpec 
+   ified: (warning: unused import: `  
+  Script`:String) [], RemoteExcepti   
+ on
+    + FullyQualifiedErrorId : NativeC 
+   ommandError
+ 
+ --> src\pages\home.rs:2:31
+  |
+2 | ...Stylesheet, Script};
+  |                ^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` 
+(part of `#[warn(unused)]`) on by 
+default
+
+warning: unused import: `Surreal`
+ --> src\model\users.rs:2:27
+  |
+2 | use surrealdb::{Response, 
+Surreal};
+  |                           ^^^^^^^
+
+warning: unused import: 
+`surrealdb::engine::local::Db`
+ --> src\model\users.rs:6:5
+  |
+6 | use surrealdb::engine::local::Db;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `save_video` is 
+never used
+  --> src\model\video.rs:28:14
+   |
+28 | pub async fn save_video(video: 
+V...
+   |              ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part 
+of `#[warn(unused)]`) on by default
+
+warning: struct `PipedResponse` is 
+never constructed
+ --> src\API\youtube.rs:7:8
+  |
+7 | struct PipedResponse {
+  |        ^^^^^^^^^^^^^
+
+warning: struct `PipedRelated` is 
+never constructed
+  --> src\API\youtube.rs:20:8
+   |
+20 | struct PipedRelated {
+   |        ^^^^^^^^^^^^
+
+warning: constant `PIPED_INSTANCES` 
+is never used
+  --> src\API\youtube.rs:24:7
+   |
+24 | const PIPED_INSTANCES: &[&str] = 
+&[
+   |       ^^^^^^^^^^^^^^^
+
+warning: function `try_fetch` is 
+never used
+  --> src\API\youtube.rs:60:10
+   |
+60 | async fn try_fetch(client: 
+&Clie...
+   |          ^^^^^^^^^
+
+warning: module `API` should have a 
+snake case name
+  --> src\main.rs:17:5
+   |
+17 | mod API;
+   |     ^^^ help: convert the 
+identifier to snake case: `api`
+   |
+   = note: `#[warn(non_snake_case)]` 
+(part of 
+`#[warn(nonstandard_style)]`) on by 
+default
+
+warning: `glassbox` (bin "glassbox") 
+generated 9 warnings (run `cargo fix 
+--bin "glassbox" -p glassbox` to 
+apply 3 suggestions)
+    Finished `dev` profile 
+[unoptimized + debuginfo] target(s) 
+in 0.71s
+2026-02-11T22:06:13.749619Z  INFO applying new distribution
+2026-02-11T22:06:13.762737Z  INFO success

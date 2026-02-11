@@ -89,10 +89,9 @@ async fn try_fetch(client: &Client, url: &str, video_id: &str) -> Result<Video, 
         description: data.description,
         thumbnail_url: data.thumbnail_url,
         channel_name: data.uploader,
-        view_count: data.views.unwrap_or(0),
-        category: "Unknown".to_string(),
-        tags: data.tags.unwrap_or_default(),
+        rating: 0.0,
+        genres: data.tags.unwrap_or_default(),
         related_ids,
-        saved_at: chrono::Utc::now().to_rfc3339(),
+        saved_at: chrono::Utc::now(),
     })
 }
