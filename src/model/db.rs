@@ -18,7 +18,7 @@ impl std::ops::Deref for SafeSurreal {
 pub static DB: OnceLock<SafeSurreal> = OnceLock::new(); 
 
 pub async fn init_db() {
-    // This creates a folder inside the user's browser named "glassbox"
+    // This creates a folder inside the user's browser named "glassbox" via IndexedDB
     match Surreal::new::<IndxDb>("glassbox").await {
         Ok(client) => {
             if let Err(e) = client.use_ns("user_private").use_db("history").await {
@@ -33,4 +33,3 @@ pub async fn init_db() {
         }
     }
 }
-

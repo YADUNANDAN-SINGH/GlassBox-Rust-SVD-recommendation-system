@@ -37,10 +37,10 @@ pub fn Login() -> impl IntoView {
 
         leptos::task::spawn_local(async move {
             match login_user(u_for_login, p_val).await {
-                Ok(_) => {
+                Ok(user) => {
                     leptos::logging::log!("LOGIN PAGE: Success, redirecting...");
-                    // 1. Update Session
-                    sess.login(u_for_session);
+                    // 1. Update Session with full User object
+                    sess.login(user);
                     // 2. Redirect to Home
                     nav("/", Default::default());
                 },

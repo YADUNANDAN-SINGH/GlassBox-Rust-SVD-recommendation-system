@@ -1,8 +1,10 @@
+use leptos::attr::Selected;
 use leptos::prelude::*;
 use leptos_meta::{Stylesheet, Script};
 use crate::API::search::search_videos;
-use crate::model::video::Video;
 use crate::cards::search_results::SearchResults;
+use crate::model::video::{Video, save_video};
+use crate::model::session::SessionState;
 
 #[component]
 pub fn Search() -> impl IntoView {
@@ -23,9 +25,11 @@ pub fn Search() -> impl IntoView {
         set_error_message.set(None); 
         set_videos.set(Vec::new()); 
 
+        let q_for_search = q.clone();
         leptos::task::spawn_local(async move {
             // Updated to pass String, not &str, as per server function signature
-            match search_videos(&q).await {
+            // Start search
+            match search_videos(&q_for_search).await {
                 Ok(results) => {
                     leptos::logging::log!("Found {} videos", results.len());
                     if results.is_empty() {
@@ -42,6 +46,20 @@ pub fn Search() -> impl IntoView {
             }
             set_is_loading.set(false);
         });
+
+        // Save history (fire and forget)
+        let sess = use_context::<SessionState>();
+        if let Some(s) = sess {
+            let session_data = s.1.get();
+            if let Some(uid_str) = session_data.user_id {
+                let query_val = q.clone();
+                leptos::task::spawn_local(async move {
+                    if let Ok(thing) = surrealdb::sql::thing(&uid_str) {
+                         let _ = crate::model::history::save_search(thing, query_val).await;
+                    }
+                });
+            }
+        }
     };
 
     let on_search_click = move |_| { search_action(); };

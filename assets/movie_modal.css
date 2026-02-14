@@ -1,0 +1,217 @@
+/* Modal Overlay - Full screen backdrop */
+.modal-overlay {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.80);
+    backdrop-filter: blur(5px);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647 !important;
+    /* Max z-index */
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Modal Content Container */
+.modal-content {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px solid #000;
+    border-radius: 30px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Close Button */
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background: #ff4444;
+    border: 2px solid #000;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    background: #ff0000;
+    transform: scale(1.1);
+}
+
+.modal-close-btn svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+/* Poster Section */
+.modal-poster-section {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    border-bottom: 3px solid #000;
+    padding: 40px 30px 30px;
+    text-align: center;
+    border-radius: 30px 30px 0 0;
+}
+
+.modal-poster-section h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #000;
+    text-transform: none;
+}
+
+.modal-poster {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Description Section */
+.modal-description-section {
+    padding: 30px;
+    background: white;
+    border-radius: 0 0 30px 30px;
+}
+
+.modal-description-section h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #000;
+    text-align: center;
+}
+
+/* Info Grid */
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 12px;
+    background: rgba(100, 108, 255, 0.08);
+    border: 2px solid #646cff;
+    border-radius: 12px;
+}
+
+.modal-info-item strong {
+    color: #646cff;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-info-item span {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Description Text */
+.modal-description {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 2px solid #000;
+    border-radius: 20px;
+}
+
+.modal-description strong {
+    display: block;
+    margin-bottom: 10px;
+    color: #000;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-description p {
+    margin: 0;
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Scrollbar Styling */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #646cff;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5158d4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-poster-section {
+        padding: 30px 20px 20px;
+    }
+
+    .modal-description-section {
+        padding: 20px;
+    }
+}

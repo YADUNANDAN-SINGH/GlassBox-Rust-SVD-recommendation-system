@@ -1,0 +1,155 @@
+﻿cargo :     Checking glassbox 
+v0.1.0 (D:\AI and  datascience 
+projects\Project 8\glassbox)
+At line:1 char:1
++ cargo check --target 
+wasm32-unknown-unknown 2>&1 | 
+Out-File compile_l ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotS 
+   pecified: (    Checking gl...e  
+  ct 8\glassbox):String) [], Rem   
+ oteException
+    + FullyQualifiedErrorId : Nati 
+   veCommandError
+ 
+error[E0252]: the name `Video` is 
+defined multiple times
+ --> src\components\search.rs:7:27
+  |
+5 | use crate::model::video::Video;
+  |     -------------------------- 
+previous import of the type 
+`Video` here
+6 | use crate::cards::search_result
+s::SearchResults;
+7 | use 
+crate::model::video::{Video, 
+save_video};
+  |                           
+^^^^^--
+  |                           |
+  |                           
+`Video` reimported here
+  |                           
+help: remove unnecessary import
+  |
+  = note: `Video` must be defined 
+only once in the type namespace of 
+this module
+
+error[E0425]: cannot find value 
+`results` in this scope
+  --> 
+src\components\search.rs:31:19
+   |
+31 |         let all = 
+results.get();
+   |                   ^^^^^^^ not 
+found in this scope
+
+error[E0425]: cannot find type 
+`SessionState` in this scope
+  --> 
+src\components\search.rs:73:34
+   |
+73 |         let sess = 
+use_context::<SessionState>();
+   |                               
+   ^^^^^^^^^^^^ not found in this 
+scope
+   |
+help: consider importing this 
+struct through its public re-export
+   |
+ 1 + use crate::SessionState;
+   |
+
+warning: unused import: 
+`leptos::attr::Selected`
+ --> src\components\search.rs:1:5
+  |
+1 | use leptos::attr::Selected;
+  |     ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: 
+`#[warn(unused_imports)]` (part of 
+`#[warn(unused)]`) on by default
+
+warning: unused import: `Video`
+ --> src\components\search.rs:7:27
+  |
+7 | use 
+crate::model::video::{Video, 
+save_video};
+  |                           ^^^^^
+
+error[E0277]: the size for values 
+of type `str` cannot be known at 
+compilation time
+   --> 
+src\components\search.rs:76:20
+    |
+ 76 |             if let 
+Some(uid_str) = 
+session_data.user_id {
+    |                    
+^^^^^^^^^^^^^ doesn't have a size 
+known at compile-time
+    |
+    = help: the trait `Sized` is 
+not implemented for `str`
+note: required by a bound in 
+`std::prelude::v1::Some`
+   --> C:\Users\yadun\.rustup\toolc
+hains\nightly-x86_64-pc-windows-msv
+c\lib/rustlib/src/rust\library/core
+/src/option.rs:600:17
+    |
+600 | pub enum Option<T> {
+    |                 ^ required 
+by this bound in 
+`std::prelude::v1::Some`
+...
+608 |     Some(#[stable(feature = 
+"rust1", since = "1.0.0")] T),
+    |     ---- required by a bound 
+in this tuple variant
+
+warning: unused variable: 
+`u_for_session`
+  --> src\pages\login.rs:30:13
+   |
+30 |         let u_for_session = 
+u_val.clone(); 
+   |             ^^^^^^^^^^^^^ 
+help: if this is intentional, 
+prefix it with an underscore: 
+`_u_for_session`
+   |
+   = note: 
+`#[warn(unused_variables)]` (part 
+of `#[warn(unused)]`) on by default
+
+warning: unused variable: `video`
+  --> src\model\video.rs:29:25
+   |
+29 | pub async fn 
+save_video(video: Video) -> 
+Result<Video, String> {
+   |                         ^^^^^ 
+help: if this is intentional, 
+prefix it with an underscore: 
+`_video`
+
+Some errors have detailed 
+explanations: E0252, E0277, E0425.
+For more information about an 
+error, try `rustc --explain E0252`.
+warning: `glassbox` (bin 
+"glassbox") generated 4 warnings
+error: could not compile 
+`glassbox` (bin "glassbox") due to 
+4 previous errors; 4 warnings 
+emitted

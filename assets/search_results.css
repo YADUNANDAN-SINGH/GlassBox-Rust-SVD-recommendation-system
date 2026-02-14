@@ -18,6 +18,8 @@
     gap: 20px;
     transition: transform 0.2s ease, background 0.2s ease;
     align-items: flex-start;
+    cursor: pointer;
+    /* Make it clear it's clickable */
 }
 
 .search-result-card:hover {

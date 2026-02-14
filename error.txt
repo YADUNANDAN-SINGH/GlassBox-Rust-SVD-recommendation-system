@@ -1,0 +1,503 @@
+﻿cargo :     Checking glassbox 
+v0.1.0 (D:\AI and  datascience 
+projects\Project 8\glassbox)
+At line:1 char:1
++ cargo check --target 
+wasm32-unknown-unknown 2>&1 | 
+Out-File error.txt ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotS 
+   pecified: (    Checking gl...e  
+  ct 8\glassbox):String) [], Rem   
+ oteException
+    + FullyQualifiedErrorId : Nati 
+   veCommandError
+ 
+error: close tag was parsed while 
+waiting for open tag
+  --> 
+src\components\movie_modal.rs:65:22
+   |
+65 |                     </div>
+   |                      ^
+
+error[E0525]: expected a closure 
+that implements the `FnMut` trait, 
+but this closure only implements 
+`FnOnce`
+  --> 
+src\components\movie_modal.rs:13:10
+   |
+10 | /       view! {
+11 | |           <Stylesheet 
+href="movie_modal.css"/>
+12 | |           
+13 | |           {move || match 
+video.get() {
+   | |           --^^^^^^
+   | |           ||
+   | |  _________|this closure 
+implements `FnOnce`, not `FnMut`
+   | | |_________|
+   | |||
+14 | |||             Some(v) => {
+15 | |||                 
+leptos::logging::log!("RENDERING 
+MODAL for: {}", v.title);
+16 | |||                 view! {
+...  |||
+20 | |||                         
+<button class="modal-close-btn" 
+on:click=move |_| on_close()>
+   | |||                           
+                                   
+             -------- closure is 
+`FnOnce` because it moves the 
+variable `on_close` out of its 
+environment
+...  |||
+69 | |||             None => view! 
+{ <div></div> }.into_any()
+70 | |||         }}
+   | |||_________-- the 
+requirement to implement `FnMut` 
+derives from here
+   | | |_________|
+   | |           this tail 
+expression is of type 
+`{closure@movie_modal.rs:13:10}`
+71 | |       }
+   | |_______- required by a bound 
+introduced by this call
+   |
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`ReactiveFunction`
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`leptos::prelude::Render`
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement `IntoRender`
+help: you might have meant to 
+create the closure instead of a 
+block
+   |
+13 |         |_| {move || match 
+video.get() {
+   |         +++
+
+error[E0277]: `impl Fn() + 
+'static` cannot be sent between 
+threads safely
+  --> 
+src\components\movie_modal.rs:13:9
+   |
+10 | /       view! {
+11 | |           <Stylesheet 
+href="movie_modal.css"/>
+12 | |           
+13 | |           {move || match 
+video.get() {
+   | |           ^-------
+   | |           ||
+   | |  _________|within this `{clo
+sure@src\components\movie_modal.rs:
+13:10: 13:17}`
+   | | |_________|
+   | |||
+14 | |||             Some(v) => {
+15 | |||                 
+leptos::logging::log!("RENDERING 
+MODAL for: {}", v.title);
+16 | |||                 view! {
+...  |||
+69 | |||             None => view! 
+{ <div></div> }.into_any()
+70 | |||         }}
+   | |||_________-^ `impl Fn() + 
+'static` cannot be sent between 
+threads safely
+   | | |_________|
+   | |           this tail 
+expression is of type 
+`{closure@movie_modal.rs:13:10}`
+71 | |       }
+   | |_______- required by a bound 
+introduced by this call
+   |
+note: required because it's used 
+within this closure
+  --> 
+src\components\movie_modal.rs:13:10
+   |
+13 |         {move || match 
+video.get() {
+   |          ^^^^^^^
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`ReactiveFunction`
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`leptos::prelude::Render`
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement `IntoRender`
+help: use parentheses to call this 
+type parameter
+   |
+70 |         }}()
+   |           ++
+help: consider restricting opaque 
+type `impl Fn() + 'static` with 
+trait `Send`
+   |
+ 8 |     on_close: impl Fn() + 
+'static + std::marker::Send,
+   |                               
+    +++++++++++++++++++
+
+error[E0525]: expected a closure 
+that implements the `FnMut` trait, 
+but this closure only implements 
+`FnOnce`
+  --> 
+src\components\movie_modal.rs:13:10
+   |
+ 9 |   ) -> impl IntoView {
+   |        ------------- the 
+requirement to implement `FnMut` 
+derives from here
+10 | /     view! {
+11 | |         <Stylesheet 
+href="movie_modal.css"/>
+12 | |         
+13 | |         {move || match 
+video.get() {
+   | |          ^^^^^^^ this 
+closure implements `FnOnce`, not 
+`FnMut`
+...  |
+20 | |                         
+<button class="modal-close-btn" 
+on:click=move |_| on_close()>
+   | |                             
+                                   
+           -------- closure is 
+`FnOnce` because it moves the 
+variable `on_close` out of its 
+environment
+...  |
+70 | |         }}
+71 | |     }
+   | |_____- return type was 
+inferred to be `View<(impl 
+IntoView, 
+{closure@movie_modal.rs:13:10})>` 
+here
+   |
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`ReactiveFunction`
+   = note: required for `{closure@s
+rc\components\movie_modal.rs:13:10:
+ 13:17}` to implement 
+`leptos::prelude::Render`
+   = note: 2 redundant 
+requirements hidden
+   = note: required for 
+`View<(impl IntoView, 
+{closure@movie_modal.rs:13:10})>` 
+to implement 
+`leptos::prelude::Render`
+   = note: required for 
+`View<(impl IntoView, 
+{closure@movie_modal.rs:13:10})>` 
+to implement `leptos::IntoView`
+   = note: the full name for the 
+type has been written to 'D:\AI 
+and  datascience projects\Project 8
+\glassbox\target\wasm32-unknown-unk
+nown\debug\deps\glassbox-4cc2261c07
+5383e5.long-type-117369718082702859
+4.txt'
+   = note: consider using 
+`--verbose` to print the full type 
+name to the console
+
+error[E0277]: the trait bound 
+`DateTime<Utc>: serde::Serialize` 
+is not satisfied
+    --> src\model\video.rs:6:17
+     |
+   6 | #[derive(Debug, Serialize, 
+Deserialize, Clone, PartialEq)] // 
+Added PartialEq for signals
+     |                 ^^^^^^^^^ 
+the trait `Serialize` is not 
+implemented for `DateTime<Utc>`
+...
+  25 |     pub saved_at: 
+DateTime<Utc>,
+     |     
+--------------------------- 
+required by a bound introduced by 
+this call
+     |
+     = note: for local types 
+consider adding 
+`#[derive(serde::Serialize)]` to 
+your `DateTime<Utc>` type
+     = note: for types from other 
+crates check whether the crate 
+offers a `serde` feature flag
+     = help: the following other 
+types implement trait `Serialize`:
+               &'a T
+               &'a mut T
+               ()
+               (T,)
+               (T0, T1)
+               (T0, T1, T2)
+               (T0, T1, T2, T3)
+               (T0, T1, T2, T3, T4)
+             and 97 others
+note: required by a bound in `users
+::_::_serde::ser::SerializeStruct::
+serialize_field`
+    --> C:\Users\yadun\.cargo\regis
+try\src\index.crates.io-1949cf8c6b5
+b557f\serde_core-1.0.228\src\ser\mo
+d.rs:1917:21
+     |
+1915 |     fn 
+serialize_field<T>(&mut self, key: 
+&'static str, value: &T) -> 
+Result<(), Self::Error>
+     |        --------------- 
+required by a bound in this 
+associated function
+1916 |     where
+1917 |         T: ?Sized + 
+Serialize;
+     |                     
+^^^^^^^^^ required by this bound 
+in 
+`SerializeStruct::serialize_field`
+     = note: this error originates 
+in the derive macro `Serialize` 
+(in Nightly builds, run with -Z 
+macro-backtrace for more info)
+
+error[E0277]: the trait bound 
+`DateTime<Utc>: 
+serde::Deserialize<'de>` is not 
+satisfied
+    --> src\model\video.rs:25:19
+     |
+  25 |     pub saved_at: 
+DateTime<Utc>,
+     |                   
+^^^^^^^^^^^^^ the trait 
+`Deserialize<'_>` is not 
+implemented for `DateTime<Utc>`
+     |
+     = note: for local types 
+consider adding 
+`#[derive(serde::Deserialize)]` to 
+your `DateTime<Utc>` type
+     = note: for types from other 
+crates check whether the crate 
+offers a `serde` feature flag
+     = help: the following other 
+types implement trait 
+`Deserialize<'de>`:
+               `&'a [u8]` 
+implements `Deserialize<'de>`
+               `&'a str` 
+implements `Deserialize<'de>`
+               `()` implements 
+`Deserialize<'de>`
+               `(T,)` implements 
+`Deserialize<'de>`
+               `(T0, T1)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2, T3)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2, T3, 
+T4)` implements `Deserialize<'de>`
+             and 94 others
+note: required by a bound in 
+`next_element`
+    --> C:\Users\yadun\.cargo\regis
+try\src\index.crates.io-1949cf8c6b5
+b557f\serde_core-1.0.228\src\de\mod
+.rs:1771:12
+     |
+1769 |     fn next_element<T>(&mut 
+self) -> Result<Option<T>, 
+Self::Error>
+     |        ------------ 
+required by a bound in this 
+associated function
+1770 |     where
+1771 |         T: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ 
+required by this bound in 
+`SeqAccess::next_element`
+
+error[E0277]: the trait bound 
+`DateTime<Utc>: 
+serde::Deserialize<'de>` is not 
+satisfied
+    --> src\model\video.rs:25:19
+     |
+  25 |     pub saved_at: 
+DateTime<Utc>,
+     |                   
+^^^^^^^^^^^^^ the trait 
+`Deserialize<'_>` is not 
+implemented for `DateTime<Utc>`
+     |
+     = note: for local types 
+consider adding 
+`#[derive(serde::Deserialize)]` to 
+your `DateTime<Utc>` type
+     = note: for types from other 
+crates check whether the crate 
+offers a `serde` feature flag
+     = help: the following other 
+types implement trait 
+`Deserialize<'de>`:
+               `&'a [u8]` 
+implements `Deserialize<'de>`
+               `&'a str` 
+implements `Deserialize<'de>`
+               `()` implements 
+`Deserialize<'de>`
+               `(T,)` implements 
+`Deserialize<'de>`
+               `(T0, T1)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2, T3)` 
+implements `Deserialize<'de>`
+               `(T0, T1, T2, T3, 
+T4)` implements `Deserialize<'de>`
+             and 94 others
+note: required by a bound in 
+`next_value`
+    --> C:\Users\yadun\.cargo\regis
+try\src\index.crates.io-1949cf8c6b5
+b557f\serde_core-1.0.228\src\de\mod
+.rs:1916:12
+     |
+1914 |     fn next_value<V>(&mut 
+self) -> Result<V, Self::Error>
+     |        ---------- required 
+by a bound in this associated 
+function
+1915 |     where
+1916 |         V: Deserialize<'de>,
+     |            ^^^^^^^^^^^^^^^^ 
+required by this bound in 
+`MapAccess::next_value`
+
+error[E0277]: the trait bound 
+`DateTime<Utc>: 
+serde::Deserialize<'de>` is not 
+satisfied
+  --> src\model\video.rs:6:28
+   |
+ 6 | #[derive(Debug, Serialize, 
+Deserialize, Clone, PartialEq)] // 
+Added PartialEq for signals
+   |                            
+^^^^^^^^^^^ the trait 
+`Deserialize<'_>` is not 
+implemented for `DateTime<Utc>`
+   |
+   = note: for local types 
+consider adding 
+`#[derive(serde::Deserialize)]` to 
+your `DateTime<Utc>` type
+   = note: for types from other 
+crates check whether the crate 
+offers a `serde` feature flag
+   = help: the following other 
+types implement trait 
+`Deserialize<'de>`:
+             `&'a [u8]` implements 
+`Deserialize<'de>`
+             `&'a str` implements 
+`Deserialize<'de>`
+             `()` implements 
+`Deserialize<'de>`
+             `(T,)` implements 
+`Deserialize<'de>`
+             `(T0, T1)` implements 
+`Deserialize<'de>`
+             `(T0, T1, T2)` 
+implements `Deserialize<'de>`
+             `(T0, T1, T2, T3)` 
+implements `Deserialize<'de>`
+             `(T0, T1, T2, T3, 
+T4)` implements `Deserialize<'de>`
+           and 94 others
+note: required by a bound in `users
+::_::_serde::__private228::de::miss
+ing_field`
+  --> C:\Users\yadun\.cargo\registr
+y\src\index.crates.io-1949cf8c6b5b5
+57f\serde-1.0.228\src\private\de.rs
+:26:8
+   |
+24 | pub fn missing_field<'de, V, 
+E>(field: &'static str) -> 
+Result<V, E>
+   |        ------------- required 
+by a bound in this function
+25 | where
+26 |     V: Deserialize<'de>,
+   |        ^^^^^^^^^^^^^^^^ 
+required by this bound in 
+`missing_field`
+   = note: this error originates 
+in the derive macro `Deserialize` 
+(in Nightly builds, run with -Z 
+macro-backtrace for more info)
+
+warning: unused variable: `video`
+  --> src\model\video.rs:29:25
+   |
+29 | pub async fn 
+save_video(video: Video) -> 
+Result<Video, String> {
+   |                         ^^^^^ 
+help: if this is intentional, 
+prefix it with an underscore: 
+`_video`
+   |
+   = note: 
+`#[warn(unused_variables)]` (part 
+of `#[warn(unused)]`) on by default
+
+Some errors have detailed 
+explanations: E0277, E0525.
+For more information about an 
+error, try `rustc --explain E0277`.
+warning: `glassbox` (bin 
+"glassbox") generated 1 warning
+error: could not compile 
+`glassbox` (bin "glassbox") due to 
+8 previous errors; 1 warning 
+emitted
