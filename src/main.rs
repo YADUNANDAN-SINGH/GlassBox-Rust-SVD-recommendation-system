@@ -1,21 +1,22 @@
 use leptos::prelude::*;
-use leptos_router::components::{Router, Route, Routes};
-use leptos_router::path;
 use leptos_meta::provide_meta_context;
+use leptos_router::components::{Route, Router, Routes};
+use leptos_router::path;
 
-use navbar::navbar::Navbar;
-use pages::login::Login;
-use pages::home::Home;
-use pages::signup::Signup;
 use model::db::init_db;
 use model::session::SessionState;
+use navbar::navbar::Navbar;
+use pages::home::Home;
+use pages::login::Login;
+use pages::signup::Signup;
 
-mod pages;
-mod navbar;
-mod model;
+#[allow(non_snake_case, dead_code)]
+mod api;
 mod cards;
-mod API;
 mod components;
+mod model;
+mod navbar;
+mod pages;
 
 // Re-export server functions so they can be called from client
 // #[cfg(not(target_arch = "wasm32"))]
@@ -24,8 +25,7 @@ mod components;
 // #[cfg(not(target_arch = "wasm32"))]
 // pub use api::youtube::fetch_video;
 
-
-fn main(){
+fn main() {
     console_error_panic_hook::set_once();
     leptos::mount::mount_to_body(App);
 }
@@ -33,7 +33,7 @@ fn main(){
 #[component]
 fn App() -> impl IntoView {
     provide_meta_context();
-    
+
     // Initialize DB
     leptos::task::spawn_local(async {
         init_db().await;

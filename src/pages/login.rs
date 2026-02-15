@@ -1,8 +1,8 @@
-use crate::model::users::login_user;
 use crate::model::session::SessionState;
-use leptos_router::hooks::use_navigate;
+use crate::model::users::login_user;
 use leptos::prelude::*;
-use leptos_meta::{Stylesheet, Script};
+use leptos_meta::{Script, Stylesheet};
+use leptos_router::hooks::use_navigate;
 
 #[component]
 pub fn Login() -> impl IntoView {
@@ -16,18 +16,17 @@ pub fn Login() -> impl IntoView {
     let (is_loading, set_is_loading) = signal(false);
 
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
-        ev.prevent_default(); 
+        ev.prevent_default();
         set_is_loading.set(true);
         set_error.set(None);
-        
+
         // Get values from signals
         let u_val = username.get();
         let p_val = password.get();
-        
+
         leptos::logging::log!("LOGIN PAGE: Submitting for user '{}'", u_val);
-        
+
         let u_for_login = u_val.clone();
-        let u_for_session = u_val.clone(); 
 
         // Clone environment for async block
         let sess = session.clone();
@@ -43,7 +42,7 @@ pub fn Login() -> impl IntoView {
                     sess.login(user);
                     // 2. Redirect to Home
                     nav("/", Default::default());
-                },
+                }
                 Err(e) => {
                     leptos::logging::log!("LOGIN PAGE: Error: {}", e);
                     setter.set(Some(e));
@@ -60,7 +59,7 @@ pub fn Login() -> impl IntoView {
             <div class="glass-card">
                 <form class="login-form" on:submit=on_submit>
                     <h1 class="form-title">"Welcome Back"</h1>
-                    
+
                     // Show Error if any
                     {move || error_msg.get().map(|e| view! {
                         <p style="color: red; text-align: center;">{e}</p>
@@ -68,9 +67,9 @@ pub fn Login() -> impl IntoView {
 
                     <div class="input-group">
                         <label class="input-label" for="username">"Username"</label>
-                        <input 
-                            id="username" 
-                            class="form-input" 
+                        <input
+                            id="username"
+                            class="form-input"
                             type="text"
                             prop:value=username
                             on:input=move |ev| set_username.set(event_target_value(&ev))
@@ -79,10 +78,10 @@ pub fn Login() -> impl IntoView {
 
                     <div class="input-group">
                         <label class="input-label" for="password">"Password"</label>
-                        <input 
-                            id="password" 
-                            class="form-input" 
-                            type="password" 
+                        <input
+                            id="password"
+                            class="form-input"
+                            type="password"
                             prop:value=password
                             on:input=move |ev| set_password.set(event_target_value(&ev))
                         />

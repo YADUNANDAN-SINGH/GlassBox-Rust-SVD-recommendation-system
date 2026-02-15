@@ -1,4 +1,6 @@
+use crate::api::search::search_videos;
 use crate::model::db::DB;
+use crate::model::svd::SVD;
 use crate::model::video::Video;
 use leptos::prelude::*;
 
@@ -7,10 +9,11 @@ pub fn Feed() -> impl IntoView {
     // Use signals instead of Resource to avoid Send issues
     let videos = RwSignal::new(Vec::<Video>::new());
     let loading = RwSignal::new(true);
+    let genre_title = RwSignal::new("Your Library".to_string()); // Dynamic title
 
     // spawn_local doesn't require Send — perfect for WASM
     leptos::task::spawn_local(async move {
-        leptos::logging::log!("FEED: Starting fetch...");
+        leptos::logging::log!("FEED: Starting recommendation engine...");
 
         // Wait for DB to be ready (retry up to 15 times, ~3 seconds)
         let mut db_ref = None;
@@ -26,18 +29,55 @@ pub fn Feed() -> impl IntoView {
 
         match db_ref {
             Some(db) => {
-                leptos::logging::log!("FEED: DB acquired, querying 'video' table...");
+                leptos::logging::log!("FEED: DB acquired, fetching 'library'...");
                 let result: Result<Vec<Video>, _> = db.select("video").await;
+
                 match result {
-                    Ok(v) => {
-                        leptos::logging::log!("FEED: Fetched {} videos", v.len());
-                        for vid in &v {
-                            leptos::logging::log!("  - {}", vid.title);
+                    Ok(library) => {
+                        if library.is_empty() {
+                            leptos::logging::log!("FEED: Library is empty. No recommendations.");
+                            loading.set(false);
+                            return;
                         }
-                        videos.set(v);
+
+                        // 1. Calculate User Vector
+                        let user_vec = SVD::user_vector(&library);
+
+                        // 2. Get Top Genre
+                        let top_genre = SVD::get_top_genre(&user_vec);
+                        leptos::logging::log!("FEED: Top Genre determined: {}", top_genre);
+                        genre_title.set(format!("Recommended for you ({})", top_genre));
+
+                        // 3. Fetch Candidates (Search API)
+                        leptos::logging::log!("FEED: Fetching candidates for genre: {}", top_genre);
+                        match search_videos(&top_genre).await {
+                            Ok(mut candidates) => {
+                                // 4. Filter out movies already in library
+                                candidates
+                                    .retain(|c| !library.iter().any(|l| l.video_id == c.video_id));
+
+                                // 5. Rank Candidates (SVD)
+                                candidates.sort_by(|a, b| {
+                                    let score_a = SVD::predict_match(&user_vec, a);
+                                    let score_b = SVD::predict_match(&user_vec, b);
+                                    score_b
+                                        .partial_cmp(&score_a)
+                                        .unwrap_or(std::cmp::Ordering::Equal)
+                                });
+
+                                leptos::logging::log!(
+                                    "FEED: Ranked {} candidates",
+                                    candidates.len()
+                                );
+                                videos.set(candidates);
+                            }
+                            Err(e) => {
+                                leptos::logging::error!("FEED: API Error: {}", e);
+                            }
+                        }
                     }
                     Err(e) => {
-                        leptos::logging::error!("FEED: Query error: {}", e);
+                        leptos::logging::error!("FEED: Database Error: {}", e);
                     }
                 }
             }
@@ -51,7 +91,7 @@ pub fn Feed() -> impl IntoView {
     view! {
         <div class="feed-container" style="margin-top: 50px; padding: 20px;">
             <h2 style="color: white; border-bottom: 1px solid #333; padding-bottom: 10px;">
-                "Your Library (Database)"
+                {move || genre_title.get()}
             </h2>
 
             {move || {
@@ -59,12 +99,12 @@ pub fn Feed() -> impl IntoView {
                 let is_loading = loading.get();
 
                 if is_loading {
-                    view! { <p style="color: #888;">"Loading feed..."</p> }.into_any()
+                    view! { <p style="color: #888;">"Analyzing your taste..."</p> }.into_any()
                 } else if v.is_empty() {
                     view! {
                         <div style="text-align: center; margin-top: 30px; color: #666;">
-                            <p>"Your database is empty."</p>
-                            <p>"Search for a movie and click it to save!"</p>
+                            <p>"Not enough data for recommendations."</p>
+                            <p>"Search and click movies to build your profile!"</p>
                         </div>
                     }.into_any()
                 } else {

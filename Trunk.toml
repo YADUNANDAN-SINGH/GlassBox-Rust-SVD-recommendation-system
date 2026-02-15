@@ -1,3 +1,12 @@
+[build]
+target = "index.html"
+dist = "dist"
+public_url = "/"
+
+[tools]
+# Disable wasm-opt to avoid build failures in Docker/CI environments
+wasm_opt = "0"
+
 [serve]
-version = "0.19.0"
 port = 8081
+open = false

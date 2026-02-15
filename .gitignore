@@ -1,1 +1,7 @@
 /target
+/dist
+
+# Log and debug files
+*.log
+*.txt
+!README.txt

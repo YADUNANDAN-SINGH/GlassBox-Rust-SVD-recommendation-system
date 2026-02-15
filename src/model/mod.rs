@@ -1,5 +1,6 @@
-pub mod video;
-pub mod users;
 pub mod db;
-pub mod session;
 pub mod history;
+pub mod session;
+pub mod svd;
+pub mod users;
+pub mod video;

@@ -1,17 +1,16 @@
-use leptos::attr::Selected;
-use leptos::prelude::*;
-use leptos_meta::{Stylesheet, Script};
-use crate::API::search::search_videos;
+use crate::api::search::search_videos;
 use crate::cards::search_results::SearchResults;
-use crate::model::video::{Video, save_video};
 use crate::model::session::SessionState;
+use crate::model::video::Video;
+use leptos::prelude::*;
+use leptos_meta::{Script, Stylesheet};
 
 #[component]
 pub fn Search() -> impl IntoView {
     let (query, set_query) = signal(String::new());
     let (is_loading, set_is_loading) = signal(false);
     let (videos, set_videos) = signal(Vec::<Video>::new());
-    let (error_message, set_error_message) = signal(Option::<String>::None); 
+    let (error_message, set_error_message) = signal(Option::<String>::None);
 
     let on_input = move |ev| {
         set_query.set(event_target_value(&ev));
@@ -19,11 +18,13 @@ pub fn Search() -> impl IntoView {
 
     let search_action = move || {
         let q = query.get();
-        if q.is_empty() { return; }
-        
+        if q.is_empty() {
+            return;
+        }
+
         set_is_loading.set(true);
-        set_error_message.set(None); 
-        set_videos.set(Vec::new()); 
+        set_error_message.set(None);
+        set_videos.set(Vec::new());
 
         let q_for_search = q.clone();
         leptos::task::spawn_local(async move {
@@ -33,11 +34,11 @@ pub fn Search() -> impl IntoView {
                 Ok(results) => {
                     leptos::logging::log!("Found {} videos", results.len());
                     if results.is_empty() {
-                         set_error_message.set(Some("No videos found.".to_string()));
+                        set_error_message.set(Some("No videos found.".to_string()));
                     } else {
                         set_videos.set(results);
                     }
-                },
+                }
                 Err(e) => {
                     let err_str = e.to_string();
                     leptos::logging::log!("Search error: {}", err_str);
@@ -55,15 +56,17 @@ pub fn Search() -> impl IntoView {
                 let query_val = q.clone();
                 leptos::task::spawn_local(async move {
                     if let Ok(thing) = surrealdb::sql::thing(&uid_str) {
-                         let _ = crate::model::history::save_search(thing, query_val).await;
+                        let _ = crate::model::history::save_search(thing, query_val).await;
                     }
                 });
             }
         }
     };
 
-    let on_search_click = move |_| { search_action(); };
-    
+    let on_search_click = move |_| {
+        search_action();
+    };
+
     let on_keydown = move |ev: web_sys::KeyboardEvent| {
         if ev.key() == "Enter" {
             search_action();
@@ -76,10 +79,10 @@ pub fn Search() -> impl IntoView {
 
         <div class="search-wrapper" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
             <div class="search-container">
-                <input 
-                    type="text" 
-                    class="search-input" 
-                    placeholder="Search..." 
+                <input
+                    type="text"
+                    class="search-input"
+                    placeholder="Search..."
                     on:input=on_input
                     prop:value=query
                     on:keydown=on_keydown

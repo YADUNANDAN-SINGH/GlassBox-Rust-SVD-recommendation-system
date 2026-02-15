@@ -1,16 +1,16 @@
 use crate::model::video::Video;
-use serde::{Deserialize, Serialize};
-use reqwest::Client;
 use leptos::prelude::*;
+use reqwest::Client;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct PipedResponse {
     title: String,
     description: String,
-    uploader: String, 
-    views: Option<u64>, 
+    uploader: String,
+    views: Option<u64>,
     #[serde(rename = "thumbnailUrl")]
-    thumbnail_url: String, 
+    thumbnail_url: String,
     tags: Option<Vec<String>>,
     #[serde(rename = "relatedStreams")]
     related_streams: Vec<PipedRelated>,
@@ -18,7 +18,7 @@ struct PipedResponse {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct PipedRelated {
-    url: String, 
+    url: String,
 }
 
 const PIPED_INSTANCES: &[&str] = &[
@@ -34,13 +34,13 @@ pub async fn fetch_video(video_id: String) -> Result<Video, ServerFnError> {
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .map_err(|e| ServerFnError::new(format!("Client build: {}", e)))?;
-    
+
     let mut last_error = String::new();
-    
+
     for base_url in PIPED_INSTANCES {
         let url = format!("{}/streams/{}", base_url, video_id);
         println!("SERVER: Trying {} for video ID: {}", base_url, video_id);
-        
+
         match try_fetch(&client, &url, &video_id).await {
             Ok(video) => {
                 println!("SERVER: Success with {}", base_url);
@@ -53,12 +53,16 @@ pub async fn fetch_video(video_id: String) -> Result<Video, ServerFnError> {
             }
         }
     }
-    
-    Err(ServerFnError::new(format!("All instances failed for video {}. Last error: {}", video_id, last_error)))
+
+    Err(ServerFnError::new(format!(
+        "All instances failed for video {}. Last error: {}",
+        video_id, last_error
+    )))
 }
 
 async fn try_fetch(client: &Client, url: &str, video_id: &str) -> Result<Video, String> {
-    let resp = client.get(url)
+    let resp = client
+        .get(url)
         .header("User-Agent", "Mozilla/5.0")
         .send()
         .await
@@ -68,10 +72,10 @@ async fn try_fetch(client: &Client, url: &str, video_id: &str) -> Result<Video, 
         return Err(format!("Status: {}", resp.status()));
     }
 
-    let data: PipedResponse = resp.json().await
-        .map_err(|e| format!("Parse: {}", e))?;
+    let data: PipedResponse = resp.json().await.map_err(|e| format!("Parse: {}", e))?;
 
-    let related_ids: Vec<String> = data.related_streams
+    let related_ids: Vec<String> = data
+        .related_streams
         .iter()
         .filter_map(|r| {
             r.url
