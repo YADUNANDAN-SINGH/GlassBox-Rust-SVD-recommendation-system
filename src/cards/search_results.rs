@@ -1,6 +1,6 @@
-use leptos::prelude::*;
-use crate::model::video::Video;
 use crate::components::movie_modal::MovieModal;
+use crate::model::video::Video;
+use leptos::prelude::*;
 use leptos_meta::Stylesheet;
 
 #[component]
@@ -22,7 +22,7 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
                 children=move |video| {
                     let video_clone = video.clone();
                     view! {
-                        <div 
+                        <div
                             class="search-result-card"
                             on:click=move |_| {
                                 leptos::logging::log!("CLICKED video: {}", video_clone.title);
@@ -34,9 +34,17 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
                                     let session_data = s.1.get();
                                     if let Some(uid_str) = session_data.user_id {
                                         let v_for_save = video_clone.clone();
+                                        let v_for_library = video_clone.clone(); // Clone for library save
                                         leptos::task::spawn_local(async move {
+                                            // 1. Save interaction
                                             if let Ok(thing) = surrealdb::sql::thing(&uid_str) {
                                                  let _ = crate::model::history::save_interaction(thing, v_for_save, "click".to_string()).await;
+                                            }
+
+                                            // 2. Save to Library (Feed)
+                                            match crate::model::video::save_video(v_for_library).await {
+                                                Ok(v) => leptos::logging::log!("SEARCH_RESULTS: Video saved to library: {}", v.title),
+                                                Err(e) => leptos::logging::error!("SEARCH_RESULTS: Failed to save video: {}", e)
                                             }
                                         });
                                     }
@@ -45,9 +53,9 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
                         >
                             // Thumbnail Section (Left)
                             <div class="result-thumbnail-container">
-                                <img 
-                                    src=video.thumbnail_url 
-                                    alt=format!("Thumbnail for {}", video.title) 
+                                <img
+                                    src=video.thumbnail_url
+                                    alt=format!("Thumbnail for {}", video.title)
                                     class="result-thumbnail"
                                     // Fallback to placeholder if broken? (Optional improvement)
                                 />

@@ -18,3 +18,5 @@ chrono = { version = "0.4.43", features = ["wasmbind", "serde"] }
 getrandom = { version = "0.3", features = ["wasm_js"] }
 console_error_panic_hook = "0.1"
 surrealdb = { version = "2.0", features = ["kv-indxdb"] }
+gloo-timers = { version = "0.3", features = ["futures"] }
+time = { version = "0.3", features = ["wasm-bindgen"] }
