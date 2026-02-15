@@ -210,16 +210,6 @@ GlassBox is built on a simple principle: **your data belongs to you**.
 
 ---
 
-## 📜 License
-
-**© 2026 Yadunandan Singh. All Rights Reserved.**
-
-This software is proprietary. Unauthorized copying, modification, distribution, or use of this software, via any medium, is strictly prohibited without explicit written permission from the author.
-
-For licensing inquiries, please open an issue or contact the author directly.
-
----
-
 <div align="center">
 
 *Built with 🦀 Rust — because your recommendations should be transparent, not your privacy.*

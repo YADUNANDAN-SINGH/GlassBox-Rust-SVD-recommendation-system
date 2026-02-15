@@ -5,3 +5,9 @@
 *.log
 *.txt
 !README.txt
+
+# Build artifacts
+build_v*.log
+
+# Local Docker build logs
+build_*.log
