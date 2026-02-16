@@ -11,81 +11,103 @@ pub fn Feed() -> impl IntoView {
     let loading = RwSignal::new(true);
     let genre_title = RwSignal::new("Your Library".to_string()); // Dynamic title
 
-    // spawn_local doesn't require Send — perfect for WASM
-    leptos::task::spawn_local(async move {
-        leptos::logging::log!("FEED: Starting recommendation engine...");
+    let feed_trigger = use_context::<crate::model::feed_control::FeedTrigger>();
 
-        // Wait for DB to be ready (retry up to 15 times, ~3 seconds)
-        let mut db_ref = None;
-        for attempt in 1..=15 {
-            if let Some(db) = DB.get() {
-                db_ref = Some(db);
-                break;
-            }
-            leptos::logging::log!("FEED: DB not ready, attempt {}/15", attempt);
-            // Use gloo_timers for async delay
-            gloo_timers::future::TimeoutFuture::new(200).await;
+    // spawn_local doesn't require Send — perfect for WASM
+    Effect::new(move |_| {
+        leptos::logging::log!("FEED: Effect triggered!");
+
+        // Subscribe to trigger if available
+        if let Some(t) = feed_trigger {
+            t.0.track();
+            leptos::logging::log!("FEED: Tracking trigger signal value: {}", t.0.get());
+        } else {
+            leptos::logging::error!("FEED: FeedTrigger context NOT FOUND!");
         }
 
-        match db_ref {
-            Some(db) => {
-                leptos::logging::log!("FEED: DB acquired, fetching 'library'...");
-                let result: Result<Vec<Video>, _> = db.select("video").await;
+        loading.set(true); // <--- Add this line!
 
-                match result {
-                    Ok(library) => {
-                        if library.is_empty() {
-                            leptos::logging::log!("FEED: Library is empty. No recommendations.");
-                            loading.set(false);
-                            return;
-                        }
+        leptos::task::spawn_local(async move {
+            leptos::logging::log!("FEED: Starting recommendation engine...");
 
-                        // 1. Calculate User Vector
-                        let user_vec = SVD::user_vector(&library);
+            // Wait for DB to be ready (retry up to 15 times, ~3 seconds)
+            let mut db_ref = None;
+            for attempt in 1..=15 {
+                if let Some(db) = DB.get() {
+                    db_ref = Some(db);
+                    break;
+                }
+                leptos::logging::log!("FEED: DB not ready, attempt {}/15", attempt);
+                // Use gloo_timers for async delay
+                gloo_timers::future::TimeoutFuture::new(200).await;
+            }
 
-                        // 2. Get Top Genre
-                        let top_genre = SVD::get_top_genre(&user_vec);
-                        leptos::logging::log!("FEED: Top Genre determined: {}", top_genre);
-                        genre_title.set(format!("Recommended for you ({})", top_genre));
+            match db_ref {
+                Some(db) => {
+                    leptos::logging::log!("FEED: DB acquired, fetching 'library'...");
+                    let result: Result<Vec<Video>, _> = db.select("video").await;
 
-                        // 3. Fetch Candidates (Search API)
-                        leptos::logging::log!("FEED: Fetching candidates for genre: {}", top_genre);
-                        match search_videos(&top_genre).await {
-                            Ok(mut candidates) => {
-                                // 4. Filter out movies already in library
-                                candidates
-                                    .retain(|c| !library.iter().any(|l| l.video_id == c.video_id));
-
-                                // 5. Rank Candidates (SVD)
-                                candidates.sort_by(|a, b| {
-                                    let score_a = SVD::predict_match(&user_vec, a);
-                                    let score_b = SVD::predict_match(&user_vec, b);
-                                    score_b
-                                        .partial_cmp(&score_a)
-                                        .unwrap_or(std::cmp::Ordering::Equal)
-                                });
-
+                    match result {
+                        Ok(library) => {
+                            if library.is_empty() {
                                 leptos::logging::log!(
-                                    "FEED: Ranked {} candidates",
-                                    candidates.len()
+                                    "FEED: Library is empty. No recommendations."
                                 );
-                                videos.set(candidates);
+                                loading.set(false);
+                                return;
                             }
-                            Err(e) => {
-                                leptos::logging::error!("FEED: API Error: {}", e);
+
+                            // 1. Calculate User Vector
+                            let user_vec = SVD::user_vector(&library);
+
+                            // 2. Get Top Genre
+                            let top_genre = SVD::get_top_genre(&user_vec);
+                            leptos::logging::log!("FEED: Top Genre determined: {}", top_genre);
+                            genre_title.set(format!("Recommended for you ({})", top_genre));
+
+                            // 3. Fetch Candidates (Search API)
+                            leptos::logging::log!(
+                                "FEED: Fetching candidates for genre: {}",
+                                top_genre
+                            );
+                            match search_videos(&top_genre).await {
+                                Ok(mut candidates) => {
+                                    // 4. Filter out movies already in library
+                                    candidates.retain(|c| {
+                                        !library.iter().any(|l| l.video_id == c.video_id)
+                                    });
+
+                                    // 5. Rank Candidates (SVD)
+                                    candidates.sort_by(|a, b| {
+                                        let score_a = SVD::predict_match(&user_vec, a);
+                                        let score_b = SVD::predict_match(&user_vec, b);
+                                        score_b
+                                            .partial_cmp(&score_a)
+                                            .unwrap_or(std::cmp::Ordering::Equal)
+                                    });
+
+                                    leptos::logging::log!(
+                                        "FEED: Ranked {} candidates",
+                                        candidates.len()
+                                    );
+                                    videos.set(candidates);
+                                }
+                                Err(e) => {
+                                    leptos::logging::error!("FEED: API Error: {}", e);
+                                }
                             }
                         }
-                    }
-                    Err(e) => {
-                        leptos::logging::error!("FEED: Database Error: {}", e);
+                        Err(e) => {
+                            leptos::logging::error!("FEED: Database Error: {}", e);
+                        }
                     }
                 }
+                None => {
+                    leptos::logging::error!("FEED: Database not available after 15 retries!");
+                }
             }
-            None => {
-                leptos::logging::error!("FEED: Database not available after 15 retries!");
-            }
-        }
-        loading.set(false);
+            loading.set(false);
+        });
     });
 
     view! {

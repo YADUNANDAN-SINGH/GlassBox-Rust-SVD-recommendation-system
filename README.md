@@ -212,7 +212,7 @@ GlassBox is built on a simple principle: **your data belongs to you**.
 
 <div align="center">
 
-*Built with 🦀 Rust — because your recommendations should be transparent, not your privacy.*
+*Built with ❤️ & 🦀 Rust — because your recommendations should be transparent, not your privacy.*
 
 **[⬆ Back to Top](#-glassbox)**
 

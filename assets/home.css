@@ -2,11 +2,12 @@
 .home-container {
     display: flex;
     justify-content: center;
-    align-items: flex;
-    width: flex;
-    height: flex;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+    align-items: center;
+    /* Changed from 'flex' to 'center' for better vertical alignment */
+    width: 100vw;
+    height: 100vh;
+    /* margin-bottom: 20px; removal to fit full screen landing */
+    /* padding-bottom: 20px; */
     /* Ensuring the background matches the user's preference or global style */
     /* background-color: #0d1117;  <-- Already in maincard.css container, but good to have fallback or if specific to home */
 }
@@ -20,4 +21,190 @@ body {
     font-family: 'Inter', sans-serif;
     /* Example font */
     color: white;
+}
+
+/* Landing Page Styles */
+.landing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.landing-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    max-width: 900px;
+    width: 90%;
+}
+
+.landing-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* Profile Section (Left) */
+.profile-section {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-image-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(100, 108, 255, 0.5);
+    box-shadow: 0 0 20px rgba(100, 108, 255, 0.3);
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    background: linear-gradient(45deg, #fff, #a5a5a5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.profile-intro {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 25px;
+    max-width: 300px;
+}
+
+.portfolio-link {
+    display: inline-block;
+    padding: 10px 25px;
+    background: linear-gradient(45deg, #646cff, #9089fc);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.portfolio-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(100, 108, 255, 0.4);
+}
+
+/* Divider */
+.divider {
+    width: 1px;
+    height: 300px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+/* Login Prompt Section (Right) */
+.login-prompt-section {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    background: linear-gradient(to right, #646cff, #42b883);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+
+.login-text {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 30px;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.login-button {
+    display: inline-block;
+    padding: 12px 30px;
+    background: transparent;
+    border: 2px solid #646cff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.login-button:hover {
+    background: #646cff;
+    box-shadow: 0 0 20px rgba(100, 108, 255, 0.4);
+}
+
+.signup-button {
+    display: inline-block;
+    padding: 12px 30px;
+    background: transparent;
+    border: 2px solid #646cff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.signup-button:hover {
+    background: #646cff;
+    box-shadow: 0 0 20px rgba(100, 108, 255, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .landing-content {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .divider {
+        width: 80%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+
+    .brand-title {
+        font-size: 2.5rem;
+    }
+
+    .landing-card {
+        padding: 30px 20px;
+        margin: 20px;
+    }
 }

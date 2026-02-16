@@ -51,16 +51,35 @@ impl SVD {
             return user_vec;
         }
 
-        for video in history {
+        // Create a list of references and sort by date (newest first)
+        let mut sorted_history: Vec<&Video> = history.iter().collect();
+        sorted_history.sort_by(|a, b| b.saved_at.cmp(&a.saved_at));
+
+        let mut total_weight = 0.0;
+
+        for (idx, video) in sorted_history.iter().enumerate() {
             let vec_vdo = Self::vectorise(video);
 
-            // We weigh the vector by the rating (if available) or default to 5.0
-            // Since Video struct usually has rating, we use it. If 0.0, assume implied interest (e.g. 5.0)
-            let weight = if video.rating > 0.0 {
+            // Base weight from rating (default 5.0)
+            let mut weight = if video.rating > 0.0 {
                 video.rating
             } else {
-                5.0 // Default weight for interaction
+                5.0
             };
+
+            // RECENCY BOOST:
+            // 1st item (newest): 5x multiplier
+            // 2nd item: 3x multiplier
+            // 3rd item: 2x multiplier
+            if idx == 0 {
+                weight *= 5.0;
+            } else if idx == 1 {
+                weight *= 3.0;
+            } else if idx == 2 {
+                weight *= 2.0;
+            }
+
+            total_weight += weight;
 
             for i in 0..vec_vdo.len() {
                 user_vec[i] += vec_vdo[i] * weight;
@@ -68,9 +87,10 @@ impl SVD {
         }
 
         // Normalize the vector
-        let count = history.len() as f64;
-        for i in 0..user_vec.len() {
-            user_vec[i] /= count;
+        if total_weight > 0.0 {
+            for i in 0..user_vec.len() {
+                user_vec[i] /= total_weight; // Normalize by sum of weights, not count
+            }
         }
 
         user_vec

@@ -8,11 +8,6 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
     // State to track which video is selected for modal
     let (selected_video, set_selected_video) = signal(Option::<Video>::None);
 
-    // Handler to close modal
-    let close_modal = move || {
-        set_selected_video.set(None);
-    };
-
     view! {
         <Stylesheet href="search_results.css"/>
         <div class="search-results-container">
@@ -26,10 +21,13 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
                             class="search-result-card"
                             on:click=move |_| {
                                 leptos::logging::log!("CLICKED video: {}", video_clone.title);
+                                leptos::logging::log!("SEARCH_RESULTS: Setting selected_video to Some(...)");
                                 set_selected_video.set(Some(video_clone.clone()));
 
                                 // Save interaction
                                 let sess = use_context::<crate::model::session::SessionState>();
+                                let feed_trigger = use_context::<crate::model::feed_control::FeedTrigger>();
+
                                 if let Some(s) = sess {
                                     let session_data = s.1.get();
                                     if let Some(uid_str) = session_data.user_id {
@@ -43,7 +41,14 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
 
                                             // 2. Save to Library (Feed)
                                             match crate::model::video::save_video(v_for_library).await {
-                                                Ok(v) => leptos::logging::log!("SEARCH_RESULTS: Video saved to library: {}", v.title),
+                                                Ok(v) => {
+                                                    leptos::logging::log!("SEARCH_RESULTS: Video saved to library: {}", v.title);
+                                                    // Trigger feed update
+                                                    if let Some(trigger) = feed_trigger {
+                                                        leptos::logging::log!("SEARCH_RESULTS: Incrementing feed trigger...");
+                                                        trigger.0.update(|c| *c += 1);
+                                                    }
+                                                },
                                                 Err(e) => leptos::logging::error!("SEARCH_RESULTS: Failed to save video: {}", e)
                                             }
                                         });
@@ -57,7 +62,6 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
                                     src=video.thumbnail_url
                                     alt=format!("Thumbnail for {}", video.title)
                                     class="result-thumbnail"
-                                    // Fallback to placeholder if broken? (Optional improvement)
                                 />
                             </div>
 
@@ -83,7 +87,7 @@ pub fn SearchResults(videos: ReadSignal<Vec<Video>>) -> impl IntoView {
             />
         </div>
 
-        // Modal Component
-        <MovieModal video=selected_video on_close=close_modal />
+        // Modal Component — now uses WriteSignal directly, no closure
+        <MovieModal video=selected_video set_video=set_selected_video />
     }
 }
